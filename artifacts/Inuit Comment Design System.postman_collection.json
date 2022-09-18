@@ -1,0 +1,299 @@
+{
+	"info": {
+		"_postman_id": "33e2c327-82f8-4193-8a3b-4ff0be7b4893",
+		"name": "Inuit Comment Design System",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Save Comment for A Post",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": 10,\r\n    \"content\": \"coment data here\",\r\n    \"parentId\": 12,\r\n    \"postId\": \"Root\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL}}api/v1/comment",
+					"host": [
+						"{{URL}}api"
+					],
+					"path": [
+						"v1",
+						"comment"
+					]
+				},
+				"description": "This api is used to create or update comments in a post\n- id: Used to identify to a comment to edit, ignore this to create a new comment\n- content: The comment data\n- parentId: If this comment is a reply then parentId is the id of the comment to which its a reply\n- postId: Used to identify the post at which comment is created"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Replies for comment in a Post",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"\r",
+							"pm.environment.set(\"postId\", \"Root\");\r",
+							"pm.environment.set(\"commentId\", 10);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{URL}}api/v1/{{postId}}/{{commentId}}/comments?page=0&size=100",
+					"host": [
+						"{{URL}}api"
+					],
+					"path": [
+						"v1",
+						"{{postId}}",
+						"{{commentId}}",
+						"comments"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "0"
+						},
+						{
+							"key": "size",
+							"value": "100"
+						}
+					]
+				},
+				"description": "This api is used to get the replies of comment in a post\n- page: page no used to get the comments. Its mandatory\n- size: no of comments should be in each page. Its mandatory\n- postId: Unique id used to identify post\n- commentId: unique id used to identify comment\n\nCheck pre request script to set postId and commentId"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Comments for Post Copy",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"\r",
+							"pm.environment.set(\"postId\", \"Root\");"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{URL}}api/v1/{{postId}}/comments?page=0&size=100",
+					"host": [
+						"{{URL}}api"
+					],
+					"path": [
+						"v1",
+						"{{postId}}",
+						"comments"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "0"
+						},
+						{
+							"key": "size",
+							"value": "100"
+						}
+					]
+				},
+				"description": "This api is used to get the top comments of a post\n- page: page no used to get the comments. Its mandatory\n- size: no of comments should be in each page. Its mandatory\n- postId: Unique id used to identify post\n\nCheck pre request script to set postId"
+			},
+			"response": []
+		},
+		{
+			"name": "Like a comment in Post",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"postId\", \"Root\");\r",
+							"pm.environment.set(\"commentId\", 10);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{URL}}api/v1/{{postId}}/{{commentId}}/like",
+					"host": [
+						"{{URL}}api"
+					],
+					"path": [
+						"v1",
+						"{{postId}}",
+						"{{commentId}}",
+						"like"
+					]
+				},
+				"description": "This api is used to like a comment in a post\n- postId: Unique id used to identify post\n- commentId: Unique id used to identify comment in the post\nCheck pre request script to set postId and commentId"
+			},
+			"response": []
+		},
+		{
+			"name": "Remove Like a comment in Post",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"postId\", \"Root\");\r",
+							"pm.environment.set(\"commentId\", 10);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{URL}}api/v1/{{postId}}/{{commentId}}/like/remove",
+					"host": [
+						"{{URL}}api"
+					],
+					"path": [
+						"v1",
+						"{{postId}}",
+						"{{commentId}}",
+						"like",
+						"remove"
+					]
+				},
+				"description": "This api is used to remove a like from the comment in a post\n- postId: Unique id used to identify post\n- commentId: Unique id used to identify comment in the post\nCheck pre request script to set postId and commentId"
+			},
+			"response": []
+		},
+		{
+			"name": "Dislike a comment in Post",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"postId\", \"Root\");\r",
+							"pm.environment.set(\"commentId\", 10);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{URL}}api/v1/{{postId}}/{{commentId}}/dislike",
+					"host": [
+						"{{URL}}api"
+					],
+					"path": [
+						"v1",
+						"{{postId}}",
+						"{{commentId}}",
+						"dislike"
+					]
+				},
+				"description": "This api is used to dislike a comment in a post\n- postId: Unique id used to identify post\n- commentId: Unique id used to identify comment in the post\nCheck pre request script to set postId and commentId"
+			},
+			"response": []
+		},
+		{
+			"name": "Remove Dislike a comment in Post",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"postId\", \"Root\");\r",
+							"pm.environment.set(\"commentId\", 10);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{URL}}api/v1/{{postId}}/{{commentId}}/dislike/remove",
+					"host": [
+						"{{URL}}api"
+					],
+					"path": [
+						"v1",
+						"{{postId}}",
+						"{{commentId}}",
+						"dislike",
+						"remove"
+					]
+				},
+				"description": "This api is used to remove a dislike from the comment in a post\n- postId: Unique id used to identify post\n- commentId: Unique id used to identify comment in the post\nCheck pre request script to set postId and commentId"
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "password",
+				"value": "testpassword",
+				"type": "string"
+			},
+			{
+				"key": "username",
+				"value": "test",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "URL",
+			"value": "http://localhost:8908/",
+			"type": "default"
+		}
+	]
+}

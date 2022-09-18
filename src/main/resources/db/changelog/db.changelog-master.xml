@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+    <changeSet id="202209180812" author="Manit Kapoor">
+
+        <createTable tableName="comment">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" primaryKeyName="comment_id_pk" />
+            </column>
+            <column name="created_user_id" type="varchar(250)"/>
+            <column name="post_id" type="varchar(250)"/>
+            <column name="content" type="varchar(1000)" />
+            <column name="parent_id" type="bigint" />
+            <column name="likes" type="int" defaultValue="0"/>
+            <column name="dislikes" type="int" defaultValue="0" />
+            <column name="created_on" type="datetime" >
+                <constraints nullable="false" />
+            </column>
+            <column name="updated_on" type="datetime" >
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addAutoIncrement tableName="comment" columnName="id" columnDataType="bigint" startWith="2" incrementBy="1" />
+        <createIndex indexName="post_id_and_parent_id_index" tableName="comment">
+            <column name="post_id"/>
+            <column name="parent_id"/>
+        </createIndex>
+
+        <createTable tableName="user">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" primaryKeyName="user_id_pk" />
+            </column>
+            <column name="username" type="varchar(250)" >
+                <constraints nullable="false" unique="false" />
+            </column>
+            <column name="password" type="varchar(250)" >
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addAutoIncrement tableName="user" columnName="id" columnDataType="bigint" startWith="1" incrementBy="1" />
+        <createIndex indexName="user_name_index" tableName="user">
+            <column name="username"/>
+        </createIndex>
+
+        <createTable tableName="comment_likes">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" primaryKeyName="comment_likes_id_pk" />
+            </column>
+            <column name="comment_id" type="bigint"/>
+            <column name="post_id" type="varchar(250)"/>
+            <column name="user_id" type="varchar(250)" />
+            <column name="created_on" type="datetime" >
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addAutoIncrement tableName="comment_likes" columnName="id" columnDataType="bigint" startWith="1" incrementBy="1" />
+
+
+        <createTable tableName="comment_dislikes">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" primaryKeyName="comment_dislikes_id_pk" />
+            </column>
+            <column name="comment_id" type="bigint"/>
+            <column name="post_id" type="varchar(250)"/>
+            <column name="user_id" type="varchar(250)" />
+            <column name="created_on" type="datetime" >
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addAutoIncrement tableName="comment_dislikes" columnName="id" columnDataType="bigint" startWith="1" incrementBy="1" />
+
+        <createIndex indexName="comment_likes_user_id_and_comment_id_and_post_id_index" tableName="comment_likes">
+            <column name="user_id"/>
+            <column name="comment_id"/>
+            <column name="post_id"/>
+        </createIndex>
+        <createIndex indexName="comment_dislikes_user_id_and_comment_id_and_post_id_index" tableName="comment_dislikes">
+            <column name="user_id"/>
+            <column name="comment_id"/>
+            <column name="post_id"/>
+        </createIndex>
+
+        <insert tableName="user">
+            <column name="id"  value="0"/>
+            <column name="username"  value="test"/>
+            <column name="password"  value="testpassword"/>
+        </insert>
+        <insert tableName="comment">
+            <column name="id"  value="1"/>
+            <column name="parent_id"  value="0"/>
+            <column name="post_id"  value="Root"/>
+            <column name="created_user_id"  value="test"/>
+            <column name="content"  value="RootContent"/>
+            <column name="likes" value="0" />
+            <column name="dislikes" value="0" />
+            <column name="created_on"  value="now()"/>
+            <column name="updated_on"  value="now()"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

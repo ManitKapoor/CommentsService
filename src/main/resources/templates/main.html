@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--===============================================================================================-->
+</head>
+<!-- Compiled and minified CSS -->
+<div class="container-fluid">
+    <h5>Comment System</h5>
+    <h6 id="postId" th:text="${postId}"></h6>
+    <div id="showComments0"></div>
+</div>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script >
+
+    let postId = $("#postId").html();
+
+    let pageBody = {};
+
+    function likeComment(commentId) {
+        if (pageBody[commentId].liked) {
+            return;
+        }
+        let callUrl =  "/api/v1/" + postId  + "/" + commentId + "/like";
+        $.ajax({
+            url: callUrl,
+            method: "POST",
+            success: function(response) {
+                let likes = parseInt($("#countLiked" + commentId).html()) + 1;
+                $("#countLiked" + commentId).html(likes);
+                pageBody[commentId].liked = true;
+                $("#likeButton" + commentId).hide();
+                $("#likeRemoveButton" + commentId).show();
+            }
+        })
+    }
+
+    function likeRemoveComment(commentId) {
+        if (!pageBody[commentId].liked) {
+            return;
+        }
+        let callUrl =  "/api/v1/" + postId  + "/" + commentId + "/like/remove";
+        $.ajax({
+            url: callUrl,
+            method: "POST",
+            success: function(response) {
+                let likes = parseInt($("#countLiked" + commentId).html()) - 1;
+                $("#countLiked" + commentId).html(likes);
+                pageBody[commentId].liked = false;
+                $("#likeButton" + commentId).show();
+                $("#likeRemoveButton" + commentId).hide();
+            }
+        })
+    }
+
+    function dislikeComment(commentId) {
+        if (pageBody[commentId].disliked) {
+            return;
+        }
+        let callUrl =  "/api/v1/" + postId  + "/" + commentId + "/dislike";
+        $.ajax({
+            url: callUrl,
+            method: "POST",
+            success: function(response) {
+                let disLikes = parseInt($("#countDisliked" + commentId).html()) + 1;
+                $("#countDisliked" + commentId).html(disLikes);
+                pageBody[commentId].disliked = true;
+                $("#dislikeButton" + commentId).hide();
+                $("#dislikeRemoveButton" + commentId).show();
+            }
+        })
+    }
+
+    function dislikeRemoveComment(commentId) {
+        if (!pageBody[commentId].disliked) {
+            return;
+        }
+        let callUrl =  "/api/v1/" + postId  + "/" + commentId + "/dislike/remove";
+        $.ajax({
+            url: callUrl,
+            method: "POST",
+            success: function(response) {
+                let disLikes = parseInt($("#countDisliked" + commentId).html()) - 1;
+                $("#countDisliked" + commentId).html(disLikes);
+                pageBody[commentId].disliked = false;
+                $("#dislikeButton" + commentId).show();
+                $("#dislikeRemoveButton" + commentId).hide();
+            }
+        })
+    }
+
+    function showComments(commentId) {
+        if (!pageBody[commentId]) {
+            pageBody[commentId] = {
+                page: -1,
+                size: 10,
+                empty: false,
+                liked: false,
+                disliked: false
+            }
+        }
+        if (!pageBody[commentId].empty) {
+            pageBody[commentId].page++;
+        }
+        let callUrl =  "/api/v1/" + postId  + "/" + commentId + "/comments?page=" + pageBody[commentId].page + "&size=" + pageBody[commentId].size;
+        $.ajax({
+            url: callUrl,
+            method:"GET",
+            success: function(response) {
+                pageBody[commentId].empty = (response.list.length === 0);
+                $('#showComments' + commentId).append(getHtml(response.list));
+            }
+        })
+    }
+
+    let HTML_CONTENT = "<div class='panel panel-primary' style=\"border: 1px solid black; padding: 10px\">\n" +
+        "    <div class='panel-heading'>By <b>{comment.name}</b></div>\n" +
+        "    <div class='panel-heading'>Likes: <span id=\"countLiked{comment.id}\">{comment.likes}</span> Dislikes: <span id=\"countDisliked{comment.id}\">{comment.dislikes}</span></div>\n" +
+        "    <div class='panel-body'>\n" +
+        "        {comment.content}\n" +
+        "    </div>\n" +
+        "    <form method=\"POST\" id=\"commentForm{comment.id}\">\n" +
+        "        <div class=\"form-group\">\n" +
+        "            <input name=\"content\" id=\"content\" class=\"form-control\" placeholder=\"Enter Comment\" rows=\"2\" required></input>\n" +
+        "        </div>\n" +
+        "        <span id=\"message\"></span>\n" +
+        "        <div class=\"form-group\">\n" +
+        "            <input type=\"submit\" name=\"submit\" id=\"submit\" class=\"btn btn-primary\" value=\"Post Comment\" />\n" +
+        "        </div>\n" +
+        "    </form>\n" +
+        "    <div id =\"showComments{comment.id}\" style=\"padding: 5px;\"> </div>\n" +
+        "    <div class='panel-footer' align='right'>\n" +
+        "        <button type='button' class='btn btn-primary' id=\"likeButton{comment.id}\" onclick='likeComment(\"{comment.id}\")'>Like</button>\n" +
+        "        <button type='button' class='btn btn-primary' id=\"likeRemoveButton{comment.id}\" onclick='likeRemoveComment(\"{comment.id}\")'>Remove Like</button>\n" +
+        "        <button type='button' class='btn btn-primary' id=\"dislikeButton{comment.id}\" onclick='dislikeComment(\"{comment.id}\")'>DisLike</button>\n" +
+        "        <button type='button' class='btn btn-primary' id=\"dislikeRemoveButton{comment.id}\" onclick='dislikeRemoveComment(\"{comment.id}\")'>Remove DisLike</button>\n" +
+        "        <button type='button' class='btn btn-primary' onclick='showComments(\"{comment.id}\")'>Load More</button>\n" +
+        "    </div>\n" +
+        "</div>";
+
+    function getHandler(commentId) {
+        return function handleEvent(event) {
+            event.preventDefault();
+            var formData = $("#commentForm" + commentId).serializeArray();
+            var formDataObject = {};
+            $.each(formData,
+                function(i, v) {
+                    formDataObject[v.name] = v.value;
+                });
+            formDataObject['name'] = 'test';
+            formDataObject['postId'] = postId;
+            formDataObject['parentId'] = commentId;
+            console.log(formDataObject);
+            $.ajax({
+                //Post comment
+                url: "/api/v1/comment",
+                method: "POST",
+                data: JSON.stringify(formDataObject),
+                contentType: "application/json; charset=utf-8",
+                success:function(response) {
+                    pageBody[commentId].page = -1;
+                    $('#showComments' + commentId).html("");
+                    prepare(commentId);
+                }
+            })
+        }
+    }
+
+    function getHtml(comments) {
+        let html = "";
+        for (let key in comments) {
+            let comment = comments[key];
+            let htmlBody = HTML_CONTENT;
+            let mainId = comment.id;
+            htmlBody = htmlBody.replaceAll("{comment.id}", mainId);
+            for (let objKey in comment) {
+                htmlBody = htmlBody.replaceAll("{comment." + objKey + "}", comment[objKey]);
+            }
+            pageBody[mainId] = {
+                page: -1,
+                size: 10,
+                empty: false,
+                liked: comment.liked,
+                disliked: comment.disliked
+            }
+            window.setTimeout(function() {
+                $('#commentForm' + mainId).on('submit', getHandler(mainId));
+                if (!comment.disliked) {
+                    $("#dislikeButton" + mainId).show();
+                    $("#dislikeRemoveButton" + mainId).hide();
+                } else {
+                    $("#dislikeButton" + mainId).hide();
+                    $("#dislikeRemoveButton" + mainId).show();
+                }
+                if (!comment.liked) {
+                    $("#likeButton" + mainId).show();
+                    $("#likeRemoveButton" + mainId).hide();
+                } else {
+                    $("#likeButton" + mainId).hide();
+                    $("#likeRemoveButton" + mainId).show();
+                }
+            }, 50);
+            html += htmlBody;
+        }
+        return html;
+    }
+
+    function prepare(commentId) {
+        showComments(commentId);
+    }
+
+    $(document).ready(function(){
+        prepare("0");
+    });
+</script>
+</html>
