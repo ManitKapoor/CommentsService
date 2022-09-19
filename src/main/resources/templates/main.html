@@ -53,8 +53,8 @@
             success: function(response) {
                 let likes = parseInt($(countId[action] + commentId).html()) + count;
                 $(countId[action] + commentId).html(likes);
-                pageBody[commentId].liked = !pageBody[commentId].liked;
-                if (pageBody[commentId].liked) {
+                pageBody[commentId][action] = !pageBody[commentId][action];
+                if (pageBody[commentId][action]) {
                     $(buttonId[action] + commentId).addClass(highlightClass);
                 } else {
                     $(buttonId[action] + commentId).removeClass(highlightClass);
@@ -197,6 +197,8 @@
     }
 
     $(document).ready(function(){
+        $('#commentForm0').attr('id', 'commentForm' + postId);
+        $('#showComments0').attr('id', 'showComments' + postId);
         $('#commentForm' + postId).on('submit', getHandler(postId));
         prepare(postId);
     });
