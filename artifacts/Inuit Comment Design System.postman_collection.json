@@ -6,7 +6,7 @@
 	},
 	"item": [
 		{
-			"name": "Save Comment for A Post",
+			"name": "Save Comment",
 			"request": {
 				"method": "POST",
 				"header": [],
@@ -34,7 +34,7 @@
 			"response": []
 		},
 		{
-			"name": "Get Comments for Post",
+			"name": "Get Comments",
 			"event": [
 				{
 					"listen": "prerequest",
@@ -76,7 +76,7 @@
 			"response": []
 		},
 		{
-			"name": "Like a comment in Post",
+			"name": "Like Comment",
 			"event": [
 				{
 					"listen": "prerequest",
@@ -107,7 +107,7 @@
 			"response": []
 		},
 		{
-			"name": "Remove Like a comment in Post",
+			"name": "Remove Like",
 			"event": [
 				{
 					"listen": "prerequest",
@@ -139,7 +139,7 @@
 			"response": []
 		},
 		{
-			"name": "Dislike a comment in Post",
+			"name": "Dislike comment",
 			"event": [
 				{
 					"listen": "prerequest",
@@ -170,7 +170,7 @@
 			"response": []
 		},
 		{
-			"name": "Remove Dislike a comment in Post",
+			"name": "Remove Dislike",
 			"event": [
 				{
 					"listen": "prerequest",
