@@ -41,9 +41,8 @@ public class DemoApplicationIntegrationTest {
 
     @Test
     public void saveCommentTest() {
-        String postId = "postId";
-        long parentId = 1;
-        CommentRequest commentRequest = CommentRequest.builder().postId(postId).parentId(parentId).name("test").content("Test comment here").build();
+        String parentId = "SamplePostId";
+        CommentRequest commentRequest = CommentRequest.builder().parentId(parentId).name("test").content("Test comment here").build();
         ResponseEntity<CommentResponse> responseEntity = restTemplate.exchange(postRequest("/api/v1/comment", commentRequest), CommentResponse.class);
         Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         CommentResponse returnedComment = responseEntity.getBody();
@@ -51,8 +50,8 @@ public class DemoApplicationIntegrationTest {
         Assertions.assertEquals(commentRequest.getName(), returnedComment.getName());
         Assertions.assertEquals(commentRequest.getContent(), returnedComment.getContent());
 
-        long commentId = returnedComment.getId();
-        CommentRequest editCommentRequest = CommentRequest.builder().id(commentId).postId(postId).parentId(parentId).name("test").content("Edit Test comment here").build();
+        String commentId = returnedComment.getId();
+        CommentRequest editCommentRequest = CommentRequest.builder().id(commentId).parentId(parentId).name("test").content("Edit Test comment here").build();
         responseEntity = restTemplate.exchange(postRequest("/api/v1/comment", editCommentRequest), CommentResponse.class);
         Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         CommentResponse returnedEditedComment = responseEntity.getBody();
@@ -74,9 +73,8 @@ public class DemoApplicationIntegrationTest {
 
     @Test
     public void fetchCommentsByPageTest() {
-        String postId = "Root";
-        long commentId = 1;
-        String url = String.format("/api/v1/%s/%s/comments?page=0&size=10", postId, commentId);
+        String parentId = "SamplePostId";
+        String url = String.format("/api/v1/%s/comments?page=0&size=10", parentId);
         ResponseEntity<CommentResponseList> responseEntity =
                 restTemplate.exchange(getRequest(url), CommentResponseList.class);
         Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
@@ -84,9 +82,8 @@ public class DemoApplicationIntegrationTest {
 
     @Test
     public void fetchCommentsByPageTestAuthFail() {
-        String postId = "Root";
-        long commentId = 1;
-        String url = String.format("/api/v1/%s/%s/comments?page=0&size=10", postId, commentId);
+        String postId = "SamplePostId";
+        String url = String.format("/api/v1/%s/comments?page=0&size=10", postId);
         ResponseEntity<CommentResponseList> responseEntity =
                 restTemplate.exchange(RequestEntity.get(url).header(authHeader, wrongAuthHeaderValue).build(), CommentResponseList.class);
         Assertions.assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
@@ -95,57 +92,59 @@ public class DemoApplicationIntegrationTest {
 
     @Test
     public void likeCommentTest() {
-        String postId = "Root";
-        long commentId = 1;
-        String url = String.format("/api/v1/%s/%s/like", postId, commentId);
+        String parentId = "SamplePostId";
+        String commentId = "MainId";
+        String url = String.format("/api/v1/%s/like", commentId);
         ResponseEntity<String> responseEntity = restTemplate.exchange(postRequest(url), String.class);
         Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        Assertions.assertTrue(checkCommentLike(postId, commentId, true));
+        Assertions.assertTrue(checkCommentLike(parentId, commentId, true));
 
-        url = String.format("/api/v1/%s/%s/like/remove", postId, commentId);
+        url = String.format("/api/v1/%s/like/remove", commentId);
         responseEntity = restTemplate.exchange(postRequest(url), String.class);
         Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        Assertions.assertTrue(checkCommentLike(postId, commentId, false));
+        Assertions.assertTrue(checkCommentLike(parentId, commentId, false));
     }
 
 
     @Test
     public void dislikeCommentTest() {
-        String postId = "Root";
-        long commentId = 1;
-        String url = String.format("/api/v1/%s/%s/dislike", postId, commentId);
+        String parentId = "SamplePostId";
+        String commentId = "MainId";
+        String url = String.format("/api/v1/%s/dislike", commentId);
         ResponseEntity<String> responseEntity = restTemplate.exchange(postRequest(url), String.class);
         Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        Assertions.assertTrue(checkCommentDislike(postId, commentId, true));
+        Assertions.assertTrue(checkCommentDislike(parentId, commentId, true));
 
-        url = String.format("/api/v1/%s/%s/dislike/remove", postId, commentId);
+        url = String.format("/api/v1/%s/dislike/remove", commentId);
         responseEntity = restTemplate.exchange(postRequest(url), String.class);
         Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        Assertions.assertTrue(checkCommentDislike(postId, commentId, false));
+        Assertions.assertTrue(checkCommentDislike(parentId, commentId, false));
     }
 
-    private boolean checkCommentDislike(String postId, long commentId, boolean value) {
-        String url = String.format("/api/v1/%s/comments?page=0&size=10", postId);
+    private boolean checkCommentDislike(String parentId, String commentId, boolean value) {
+        String url = String.format("/api/v1/%s/comments?page=0&size=10", parentId);
         ResponseEntity<CommentResponseList> responseEntity =
                 restTemplate.exchange(getRequest(url), CommentResponseList.class);
         Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         List<CommentResponse> commentResponses = responseEntity.getBody().getList();
         for (CommentResponse commentResponse: commentResponses) {
-            if (commentResponse.getId() == commentId) {
+            System.out.println(commentResponse.toString());
+            if (commentResponse.getId().equals(commentId)) {
                 return commentResponse.isDisliked() == value;
             }
         }
         return false;
     }
 
-    public boolean checkCommentLike(String postId, long commentId, boolean value) {
-        String url = String.format("/api/v1/%s/comments?page=0&size=10", postId);
+    public boolean checkCommentLike(String parentId, String commentId, boolean value) {
+        String url = String.format("/api/v1/%s/comments?page=0&size=10", parentId);
         ResponseEntity<CommentResponseList> responseEntity =
                 restTemplate.exchange(getRequest(url), CommentResponseList.class);
         Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         List<CommentResponse> commentResponses = responseEntity.getBody().getList();
         for (CommentResponse commentResponse: commentResponses) {
-            if (commentResponse.getId() == commentId) {
+            System.out.println(commentResponse.toString());
+            if (commentResponse.getId().equals(commentId)) {
                 return commentResponse.isLiked() == value;
             }
         }
