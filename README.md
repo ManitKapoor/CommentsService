@@ -56,6 +56,9 @@ DAO layer implements the required persistence and data object query operations b
 
 ## Low Level Design
 
+We store comments in a table the top level comments have postId as parentId.
+The other replies who have parent comment, they have parentId as commentId.
+
 #### Class Diagram
 
 ![Not Loading](./artifacts/classDiagram.png?raw=true)
