@@ -26,6 +26,9 @@ public class CommentLike {
 
     @Column(name = "comment_id")
     private String commentId;
+
+    @Column(name = "value")
+    private String value;
     @Column(name = "created_on")
     private Date createdOn;
 

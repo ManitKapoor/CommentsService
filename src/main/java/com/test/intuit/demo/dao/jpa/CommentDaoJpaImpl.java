@@ -2,11 +2,9 @@ package com.test.intuit.demo.dao.jpa;
 
 import com.test.intuit.demo.dao.CommentDao;
 import com.test.intuit.demo.dao.jpa.entity.Comment;
-import com.test.intuit.demo.dao.jpa.entity.CommentDislike;
 import com.test.intuit.demo.dao.jpa.entity.CommentLike;
 import com.test.intuit.demo.pojo.CommentRequest;
 import com.test.intuit.demo.pojo.CommentResponse;
-import com.test.intuit.demo.dao.jpa.repository.CommentDislikesRepository;
 import com.test.intuit.demo.dao.jpa.repository.CommentLikesRepository;
 import com.test.intuit.demo.dao.jpa.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,28 +26,33 @@ public class CommentDaoJpaImpl implements CommentDao {
 
     private final CommentLikesRepository commentLikesRepository;
 
-    private final CommentDislikesRepository commentDislikesRepository;
 
     private List<CommentResponse> computeCommentResponses(List<Comment> comments, String userId) {
         List<String> commentIds = comments.stream().map(Comment::getId).collect(Collectors.toList());
-        List<String> commentLikes = commentLikesRepository.findAllByUserIdAndCommentIdIn(userId, commentIds)
-                .stream().map(CommentLike::getCommentId).collect(Collectors.toList());
-        List<String> commentDislikes = commentDislikesRepository.findAllByUserIdAndCommentIdIn(userId, commentIds)
-                .stream().map(CommentDislike::getCommentId).collect(Collectors.toList());
-        Set<String> likedCommentIdSet = new HashSet<>(commentLikes);
-        Set<String> dislikedCommentIdSet = new HashSet<>(commentDislikes);
-        return comments.stream().map(comment -> CommentResponse.builder()
-                .content(comment.getContent())
-                .name(comment.getName())
-                .parentId(comment.getParentId())
-                .id(comment.getId())
-                .likes(comment.getLikes())
-                .dislikes(comment.getDislikes())
-                .updateOn(comment.getUpdatedOn().toString())
-                .createdOn(comment.getCreatedOn().toString())
-                .liked(likedCommentIdSet.contains(comment.getId()))
-                .disliked(dislikedCommentIdSet.contains(comment.getId()))
-                .build()).collect(Collectors.toList());
+        List<CommentLike> commentLikes = commentLikesRepository.findAllByUserIdAndCommentIdIn(userId, commentIds);
+        HashMap<String, CommentLike> likedCommentMap = new HashMap<>();
+        commentLikes.forEach(commentLike -> likedCommentMap.put(commentLike.getCommentId(), commentLike));
+        return comments.stream().map(comment -> {
+            boolean liked = false;
+            boolean disliked = false;
+            if (likedCommentMap.containsKey(comment.getId())) {
+                boolean value = Boolean.parseBoolean(likedCommentMap.get(comment.getId()).getValue());
+                liked = value;
+                disliked = !value;
+            }
+            return CommentResponse.builder()
+                    .content(comment.getContent())
+                    .name(comment.getName())
+                    .parentId(comment.getParentId())
+                    .id(comment.getId())
+                    .likes(comment.getLikes())
+                    .dislikes(comment.getDislikes())
+                    .updateOn(comment.getUpdatedOn().toString())
+                    .createdOn(comment.getCreatedOn().toString())
+                    .liked(liked)
+                    .disliked(disliked)
+                    .build();
+        }).collect(Collectors.toList());
     }
 
     @Override
@@ -64,7 +67,7 @@ public class CommentDaoJpaImpl implements CommentDao {
 
     @Transactional
     @Override
-    public void likeComment(String commentId, String userId) {
+    public void actionComment(String commentId, String userId, boolean value) {
         if (!commentLikesRepository.findAllByCommentIdAndUserId(commentId, userId).isEmpty()) {
             return;
         }
@@ -72,40 +75,18 @@ public class CommentDaoJpaImpl implements CommentDao {
         commentLikesRepository.save(CommentLike.builder()
                 .commentId(commentId)
                 .userId(userId)
+                .value(String.valueOf(value))
                 .build());
     }
 
     @Transactional
     @Override
-    public void removeLikeComment(String commentId, String userId) {
+    public void removeActionComment(String commentId, String userId) {
         if (commentLikesRepository.findAllByCommentIdAndUserId(commentId, userId).isEmpty()) {
             return;
         }
         commentRepository.decreaseLike(commentId);
         commentLikesRepository.deleteAllByCommentIdAndUserId(commentId, userId);
-    }
-
-    @Transactional
-    @Override
-    public void dislikeComment(String commentId, String userId) {
-        if (!commentDislikesRepository.findAllByCommentIdAndUserId(commentId, userId).isEmpty()) {
-            return;
-        }
-        commentRepository.increaseDisLike(commentId);
-        commentDislikesRepository.save(CommentDislike.builder()
-                .commentId(commentId)
-                .userId(userId)
-                .build());
-    }
-
-    @Transactional
-    @Override
-    public void removeDisLikeComment(String commentId, String userId) {
-        if (commentDislikesRepository.findAllByCommentIdAndUserId(commentId, userId).isEmpty()) {
-            return;
-        }
-        commentRepository.decreaseDisLike(commentId);
-        commentDislikesRepository.deleteAllByCommentIdAndUserId(commentId, userId);
     }
 
     private CommentResponse convertEntityToResponse(Comment comment) {

@@ -42,30 +42,14 @@
             </column>
             <column name="comment_id" type="varchar(250)"/>
             <column name="user_id" type="varchar(250)" />
+            <column name="value" type="varchar(250)" />
             <column name="created_on" type="datetime" >
                 <constraints nullable="false" />
             </column>
         </createTable>
         <addAutoIncrement tableName="comment_likes" columnName="id" columnDataType="bigint" startWith="1" incrementBy="1" />
 
-
-        <createTable tableName="comment_dislikes">
-            <column name="id" type="bigint">
-                <constraints primaryKey="true" primaryKeyName="comment_dislikes_id_pk" />
-            </column>
-            <column name="comment_id" type="varchar(250)"/>
-            <column name="user_id" type="varchar(250)" />
-            <column name="created_on" type="datetime" >
-                <constraints nullable="false" />
-            </column>
-        </createTable>
-        <addAutoIncrement tableName="comment_dislikes" columnName="id" columnDataType="bigint" startWith="1" incrementBy="1" />
-
         <createIndex indexName="comment_likes_user_id_and_comment_id__index" tableName="comment_likes">
-            <column name="user_id"/>
-            <column name="comment_id"/>
-        </createIndex>
-        <createIndex indexName="comment_dislikes_user_id_and_comment_id__index" tableName="comment_dislikes">
             <column name="user_id"/>
             <column name="comment_id"/>
         </createIndex>

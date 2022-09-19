@@ -25,19 +25,19 @@ public class PostCommentService {
     }
 
     public void likeComment(String  commentId, String username) {
-        postPartitionService.getCommentDao(commentId).likeComment(commentId, username);
+        postPartitionService.getCommentDao(commentId).actionComment(commentId, username, true);
     }
 
     public void removeLikeComment(String  commentId, String username) {
-        postPartitionService.getCommentDao(commentId).removeLikeComment(commentId, username);
+        postPartitionService.getCommentDao(commentId).removeActionComment(commentId, username);
     }
 
     public void dislikeComment(String  commentId, String username) {
-        postPartitionService.getCommentDao(commentId).dislikeComment(commentId, username);
+        postPartitionService.getCommentDao(commentId).actionComment(commentId, username, false);
 
     }
 
     public void removeDisLikeComment(String  commentId, String username) {
-        postPartitionService.getCommentDao(commentId).removeDisLikeComment(commentId, username);
+        postPartitionService.getCommentDao(commentId).removeActionComment(commentId, username);
     }
 }

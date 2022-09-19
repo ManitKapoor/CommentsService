@@ -12,11 +12,7 @@ public interface CommentDao {
 
     CommentResponse save(CommentRequest commentRequest);
 
-    void likeComment(String commentId, String userId);
+    void actionComment(String commentId, String userId, boolean action);
 
-    void removeLikeComment(String commentId, String userId);
-
-    void dislikeComment(String commentId, String userId);
-
-    void removeDisLikeComment(String commentId, String userId);
+    void removeActionComment(String commentId, String userId);
 }
