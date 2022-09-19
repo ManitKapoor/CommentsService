@@ -51,13 +51,20 @@
             url: callUrl,
             method: "POST",
             success: function(response) {
-                let likes = parseInt($(countId[action] + commentId).html()) + count;
-                $(countId[action] + commentId).html(likes);
                 pageBody[commentId][action] = !pageBody[commentId][action];
                 if (pageBody[commentId][action]) {
                     $(buttonId[action] + commentId).addClass(highlightClass);
                 } else {
                     $(buttonId[action] + commentId).removeClass(highlightClass);
+                }
+                let value = parseInt($(countId[action] + commentId).html()) + count;
+                $(countId[action] + commentId).html(value);
+                let counterPart = (action === "like")?"dislike":"like";
+                if (pageBody[commentId][counterPart]) {
+                    pageBody[commentId][counterPart] = false;
+                    let value = parseInt($(countId[counterPart] + commentId).html()) - 1;
+                    $(countId[counterPart] + commentId).html(Math.max(0, value));
+                    $(buttonId[counterPart] + commentId).removeClass(highlightClass);
                 }
             }
         })
