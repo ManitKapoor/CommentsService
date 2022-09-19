@@ -6,13 +6,13 @@
     <!--===============================================================================================-->
 </head>
 <!-- Compiled and minified CSS -->
-<div class="container-fluid">
+<div class="comment-thread">
     <h5>Comment System</h5>
     <h6 id="postId" th:text="${postId}"></h6>
     <div id="showComments0"></div>
 </div>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link rel="stylesheet" href="/main.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script >
 
@@ -20,74 +20,51 @@
 
     let pageBody = {};
 
+    let highlightClass = "activated";
+
     function likeComment(commentId) {
+        let part = "";
+        let count = 1;
         if (pageBody[commentId].liked) {
-            return;
+            part = "/remove";
+            count = -1;
         }
-        let callUrl =  "/api/v1/" + postId  + "/" + commentId + "/like";
+        let callUrl =  "/api/v1/" + postId  + "/" + commentId + "/like" + part;
         $.ajax({
             url: callUrl,
             method: "POST",
             success: function(response) {
-                let likes = parseInt($("#countLiked" + commentId).html()) + 1;
+                let likes = parseInt($("#countLiked" + commentId).html()) + count;
                 $("#countLiked" + commentId).html(likes);
-                pageBody[commentId].liked = true;
-                $("#likeButton" + commentId).hide();
-                $("#likeRemoveButton" + commentId).show();
+                pageBody[commentId].liked = !pageBody[commentId].liked;
+                if (pageBody[commentId].liked) {
+                    $("#likeButton" + commentId).addClass(highlightClass);
+                } else {
+                    $("#likeButton" + commentId).removeClass(highlightClass);
+                }
             }
         })
     }
-
-    function likeRemoveComment(commentId) {
-        if (!pageBody[commentId].liked) {
-            return;
-        }
-        let callUrl =  "/api/v1/" + postId  + "/" + commentId + "/like/remove";
-        $.ajax({
-            url: callUrl,
-            method: "POST",
-            success: function(response) {
-                let likes = parseInt($("#countLiked" + commentId).html()) - 1;
-                $("#countLiked" + commentId).html(likes);
-                pageBody[commentId].liked = false;
-                $("#likeButton" + commentId).show();
-                $("#likeRemoveButton" + commentId).hide();
-            }
-        })
-    }
-
     function dislikeComment(commentId) {
+        let part = "";
+        let count = 1;
         if (pageBody[commentId].disliked) {
-            return;
+            part = "/remove";
+            count = -1;
         }
-        let callUrl =  "/api/v1/" + postId  + "/" + commentId + "/dislike";
+        let callUrl =  "/api/v1/" + postId  + "/" + commentId + "/dislike" + part;
         $.ajax({
             url: callUrl,
             method: "POST",
             success: function(response) {
-                let disLikes = parseInt($("#countDisliked" + commentId).html()) + 1;
+                let disLikes = parseInt($("#countDisliked" + commentId).html()) + count;
                 $("#countDisliked" + commentId).html(disLikes);
-                pageBody[commentId].disliked = true;
-                $("#dislikeButton" + commentId).hide();
-                $("#dislikeRemoveButton" + commentId).show();
-            }
-        })
-    }
-
-    function dislikeRemoveComment(commentId) {
-        if (!pageBody[commentId].disliked) {
-            return;
-        }
-        let callUrl =  "/api/v1/" + postId  + "/" + commentId + "/dislike/remove";
-        $.ajax({
-            url: callUrl,
-            method: "POST",
-            success: function(response) {
-                let disLikes = parseInt($("#countDisliked" + commentId).html()) - 1;
-                $("#countDisliked" + commentId).html(disLikes);
-                pageBody[commentId].disliked = false;
-                $("#dislikeButton" + commentId).show();
-                $("#dislikeRemoveButton" + commentId).hide();
+                pageBody[commentId].disliked = !pageBody[commentId].disliked;
+                if (pageBody[commentId].disliked) {
+                    $("#dislikeButton" + commentId).addClass(highlightClass);
+                } else {
+                    $("#dislikeButton" + commentId).removeClass(highlightClass);
+                }
             }
         })
     }
@@ -116,29 +93,44 @@
         })
     }
 
-    let HTML_CONTENT = "<div class='panel panel-primary' style=\"border: 1px solid black; padding: 10px\">\n" +
-        "    <div class='panel-heading'>By <b>{comment.name}</b></div>\n" +
-        "    <div class='panel-heading'>Likes: <span id=\"countLiked{comment.id}\">{comment.likes}</span> Dislikes: <span id=\"countDisliked{comment.id}\">{comment.dislikes}</span></div>\n" +
-        "    <div class='panel-body'>\n" +
-        "        {comment.content}\n" +
-        "    </div>\n" +
-        "    <form method=\"POST\" id=\"commentForm{comment.id}\">\n" +
-        "        <div class=\"form-group\">\n" +
-        "            <input name=\"content\" id=\"content\" class=\"form-control\" placeholder=\"Enter Comment\" rows=\"2\" required></input>\n" +
+    let HTML_CONTENT = "<div class=\"comment\" id=\"comment-{comment.id}\">\n" +
+        "    <details open class=\"comment\" id=\"comment-1\">\n" +
+        "        <a href=\"#comment-{comment.id}\" class=\"comment-border-link\">\n" +
+        "            <span class=\"sr-only\">Jump to comment-{comment.id}</span>\n" +
+        "        </a>\n" +
+        "        <summary>\n" +
+        "            <div class=\"comment-heading\">\n" +
+        "                <div class=\"comment-info\">\n" +
+        "                    <a href=\"#\" class=\"comment-author\">{comment.name}</a>\n" +
+        "                    <p class=\"m-0\">\n" +
+        "                        &bull; {comment.updateOn}\n" +
+        "                    </p>\n" +
+        "                </div>\n" +
+        "            </div>\n" +
+        "        </summary>\n" +
+        "        <div class=\"comment-body\">\n" +
+        "            <p>\n" +
+        "                {comment.content}\n" +
+        "            </p>\n" +
+        "            <button type='button' class=\"tagButton\" id=\"likeButton{comment.id}\"\n" +
+        "                    onclick='likeComment(\"{comment.id}\")'><span class=\"count\"\n" +
+        "            id=\"countLiked{comment.id}\">{comment.likes}</span> <i class=\"material-icons reduceSize\">thumb_up</i></button>\n" +
+        "            <button type='button' class=\"tagButton\" id=\"dislikeButton{comment.id}\"\n" +
+        "                    onclick='dislikeComment(\"{comment.id}\")'><span\n" +
+        "                    class=\"count\" id=\"countDisliked{comment.id}\">{comment.dislikes}</span> <i\n" +
+        "                    class=\"material-icons reduceSize\">thumb_down</i></button>\n" +
         "        </div>\n" +
-        "        <span id=\"message\"></span>\n" +
-        "        <div class=\"form-group\">\n" +
-        "            <input type=\"submit\" name=\"submit\" id=\"submit\" class=\"btn btn-primary\" value=\"Post Comment\" />\n" +
+        "        <form class=\"commentForm\" method=\"POST\" id=\"commentForm{comment.id}\">\n" +
+        "            <div class=\"form-group\">\n" +
+        "                <input name=\"content\" id=\"content\" class=\"textarea\" placeholder=\"reply\" rows=\"2\"\n" +
+        "                       required />\n" +
+        "                <input class=\"submit\" type=\"submit\" name=\"submit\" id=\"submit\" value=\"Reply\"/>\n" +
+        "            </div>\n" +
+        "        </form>\n" +
+        "        <div id=\"showComments{comment.id}\" class=\"replies\">\n" +
         "        </div>\n" +
-        "    </form>\n" +
-        "    <div id =\"showComments{comment.id}\" style=\"padding: 5px;\"> </div>\n" +
-        "    <div class='panel-footer' align='right'>\n" +
-        "        <button type='button' class='btn btn-primary' id=\"likeButton{comment.id}\" onclick='likeComment(\"{comment.id}\")'>Like</button>\n" +
-        "        <button type='button' class='btn btn-primary' id=\"likeRemoveButton{comment.id}\" onclick='likeRemoveComment(\"{comment.id}\")'>Remove Like</button>\n" +
-        "        <button type='button' class='btn btn-primary' id=\"dislikeButton{comment.id}\" onclick='dislikeComment(\"{comment.id}\")'>DisLike</button>\n" +
-        "        <button type='button' class='btn btn-primary' id=\"dislikeRemoveButton{comment.id}\" onclick='dislikeRemoveComment(\"{comment.id}\")'>Remove DisLike</button>\n" +
-        "        <button type='button' class='btn btn-primary' onclick='showComments(\"{comment.id}\")'>Load More</button>\n" +
-        "    </div>\n" +
+        "        <button class=\"loadMoreReplies\" onclick='showComments(\"{comment.id}\")'>Load more replies</button>\n" +
+        "    </details>\n" +
         "</div>";
 
     function getHandler(commentId) {
@@ -162,6 +154,7 @@
                 contentType: "application/json; charset=utf-8",
                 success:function(response) {
                     pageBody[commentId].page = -1;
+                    pageBody[commentId].empty = false;
                     $('#showComments' + commentId).html("");
                     prepare(commentId);
                 }
@@ -188,19 +181,16 @@
             }
             window.setTimeout(function() {
                 $('#commentForm' + mainId).on('submit', getHandler(mainId));
-                if (!comment.disliked) {
-                    $("#dislikeButton" + mainId).show();
-                    $("#dislikeRemoveButton" + mainId).hide();
+                let commentId = mainId;
+                if (pageBody[commentId].liked) {
+                    $("#likeButton" + commentId).addClass(highlightClass);
                 } else {
-                    $("#dislikeButton" + mainId).hide();
-                    $("#dislikeRemoveButton" + mainId).show();
+                    $("#likeButton" + commentId).removeClass(highlightClass);
                 }
-                if (!comment.liked) {
-                    $("#likeButton" + mainId).show();
-                    $("#likeRemoveButton" + mainId).hide();
+                if (pageBody[commentId].disliked) {
+                    $("#dislikeButton" + commentId).addClass(highlightClass);
                 } else {
-                    $("#likeButton" + mainId).hide();
-                    $("#likeRemoveButton" + mainId).show();
+                    $("#dislikeButton" + commentId).removeClass(highlightClass);
                 }
             }, 50);
             html += htmlBody;

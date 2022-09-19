@@ -1,0 +1,40 @@
+<div class="comment" id="comment-{comment.id}">
+    <details open class="comment" id="comment-1">
+        <a href="#comment-{comment.id}" class="comment-border-link">
+            <span class="sr-only">Jump to comment-{comment.id}</span>
+        </a>
+        <summary>
+            <div class="comment-heading">
+                <div class="comment-info">
+                    <a href="#" class="comment-author">{comment.name}</a>
+                    <p class="m-0">
+                        &bull; {comment.updateOn}
+                    </p>
+                </div>
+            </div>
+        </summary>
+        <div class="comment-body">
+            <p>
+                {comment.content}
+            </p>
+            <button type='button' class="tagButton" id="likeButton{comment.id}"
+                    onclick='likeComment("{comment.id}")'><span class="count"
+            id="countLiked{comment.id}">{comment.likes}</span> <i class="material-icons reduceSize">thumb_up</i></button>
+            <button type='button' class="tagButton" id="dislikeButton{comment.id}"
+                    onclick='dislikeComment("{comment.id}")'><span
+                    class="count" id="countDisliked{comment.id}">{comment.dislikes}</span> <i
+                    class="material-icons reduceSize">thumb_down</i></button>
+        </div>
+        <form class="commentForm" method="POST" id="commentForm{comment.id}">
+            <div class="form-group">
+                <input name="content" id="content" class="textarea" placeholder="reply" rows="2"
+                       required />
+                <input class="submit" type="submit" name="submit" id="submit" value="Reply"/>
+            </div>
+        </form>
+        <div id="showComments{comment.id}" class="replies">
+        </div>
+        <button class="loadMoreReplies" onclick='showComments("{comment.id}")'>Load more replies</button>
+    </details>
+</div>
+
