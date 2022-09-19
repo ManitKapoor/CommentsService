@@ -61,14 +61,14 @@ public class DemoApplicationIntegrationTest {
         Assertions.assertEquals(commentId, returnedEditedComment.getId());
     }
 
-//    @Test
-//    public void runServiceForManualDebug() {
-//        try {
-//            Thread.sleep(9000000000L);
-//        } catch (InterruptedException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
+    @Test
+    public void runServiceForManualDebug() {
+        try {
+            Thread.sleep(9000000000L);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 
     @Test
