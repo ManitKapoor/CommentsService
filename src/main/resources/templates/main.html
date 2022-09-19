@@ -9,6 +9,13 @@
 <div class="comment-thread">
     <h5>Comment System</h5>
     <h6 id="postId" th:text="${postId}"></h6>
+    <form class="commentForm" method="POST" id="commentForm0">
+        <div class="form-group">
+            <input name="content" id="content" class="textarea" placeholder="reply" rows="2"
+                   required />
+            <input class="submit" type="submit" name="submit" id="submit" value="Reply"/>
+        </div>
+    </form>
     <div id="showComments0"></div>
 </div>
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -203,6 +210,7 @@
     }
 
     $(document).ready(function(){
+        $('#commentForm0').on('submit', getHandler("0"));
         prepare("0");
     });
 </script>
