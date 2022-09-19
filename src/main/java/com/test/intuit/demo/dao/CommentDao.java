@@ -7,17 +7,16 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 @Service
 public interface CommentDao {
-    List<CommentResponse> findAll(String postId, int page, int size, String userId);
 
-    List<CommentResponse> findAllReplies(String postId, Long commentId, int page, int size, String userId);
+    List<CommentResponse> findAllReplies(String parentId, int page, int size, String userId);
 
     CommentResponse save(CommentRequest commentRequest);
 
-    void likeComment(String postId, Long commentId, String userId);
+    void likeComment(String commentId, String userId);
 
-    void removeLikeComment(String postId, Long commentId, String userId);
+    void removeLikeComment(String commentId, String userId);
 
-    void dislikeComment(String postId, Long commentId, String userId);
+    void dislikeComment(String commentId, String userId);
 
-    void removeDisLikeComment(String postId, Long commentId, String userId);
+    void removeDisLikeComment(String commentId, String userId);
 }

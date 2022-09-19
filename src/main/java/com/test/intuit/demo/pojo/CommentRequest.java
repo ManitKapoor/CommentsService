@@ -15,14 +15,12 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CommentRequest {
-    private Long id;
+    private String id;
     private String name;
     @NotBlank
     private String content;
     private int likes;
     private int dislikes;
     @NotNull
-    private Long parentId;
-    @NotNull
-    private String postId;
+    private String parentId;
 }

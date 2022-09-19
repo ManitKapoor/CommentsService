@@ -10,9 +10,12 @@ import java.util.List;
 
 @Repository
 public interface CommentDislikesRepository extends JpaRepository<CommentDislike, Long> {
-    List<CommentDislike> findAllByCommentIdAndUserIdAndPostId(long commentId, String userId, String postId);
+
+    List<CommentDislike> findAllByCommentIdAndUserId(String commentId, String userId);
+
     @Modifying
-    void deleteAllByCommentIdAndUserIdAndPostId(long commentId, String userId, String postId);
-    List<CommentDislike> findAllByUserIdAndCommentIdIn(String userId, List<Long> commentIds);
+    void deleteAllByCommentIdAndUserId(String commentId, String userId);
+
+    List<CommentDislike> findAllByUserIdAndCommentIdIn(String userId, List<String> commentIds);
 
 }

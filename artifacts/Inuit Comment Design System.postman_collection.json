@@ -34,15 +34,14 @@
 			"response": []
 		},
 		{
-			"name": "Get Replies for comment in a Post",
+			"name": "Get Comments for Post",
 			"event": [
 				{
 					"listen": "prerequest",
 					"script": {
 						"exec": [
 							"\r",
-							"pm.environment.set(\"postId\", \"Root\");\r",
-							"pm.environment.set(\"commentId\", 10);"
+							"pm.environment.set(\"commentId\", \"Root\");"
 						],
 						"type": "text/javascript"
 					}
@@ -52,56 +51,13 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{URL}}api/v1/{{postId}}/{{commentId}}/comments?page=0&size=100",
+					"raw": "{{URL}}api/v1/{{commentId}}/comments?page=0&size=100",
 					"host": [
 						"{{URL}}api"
 					],
 					"path": [
 						"v1",
-						"{{postId}}",
 						"{{commentId}}",
-						"comments"
-					],
-					"query": [
-						{
-							"key": "page",
-							"value": "0"
-						},
-						{
-							"key": "size",
-							"value": "100"
-						}
-					]
-				},
-				"description": "This api is used to get the replies of comment in a post\n- page: page no used to get the comments. Its mandatory\n- size: no of comments should be in each page. Its mandatory\n- postId: Unique id used to identify post\n- commentId: unique id used to identify comment\n\nCheck pre request script to set postId and commentId"
-			},
-			"response": []
-		},
-		{
-			"name": "Get Comments for Post Copy",
-			"event": [
-				{
-					"listen": "prerequest",
-					"script": {
-						"exec": [
-							"\r",
-							"pm.environment.set(\"postId\", \"Root\");"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{URL}}api/v1/{{postId}}/comments?page=0&size=100",
-					"host": [
-						"{{URL}}api"
-					],
-					"path": [
-						"v1",
-						"{{postId}}",
 						"comments"
 					],
 					"query": [
@@ -126,7 +82,6 @@
 					"listen": "prerequest",
 					"script": {
 						"exec": [
-							"pm.environment.set(\"postId\", \"Root\");\r",
 							"pm.environment.set(\"commentId\", 10);"
 						],
 						"type": "text/javascript"
@@ -137,13 +92,12 @@
 				"method": "POST",
 				"header": [],
 				"url": {
-					"raw": "{{URL}}api/v1/{{postId}}/{{commentId}}/like",
+					"raw": "{{URL}}api/v1/{{commentId}}/like",
 					"host": [
 						"{{URL}}api"
 					],
 					"path": [
 						"v1",
-						"{{postId}}",
 						"{{commentId}}",
 						"like"
 					]
@@ -159,7 +113,6 @@
 					"listen": "prerequest",
 					"script": {
 						"exec": [
-							"pm.environment.set(\"postId\", \"Root\");\r",
 							"pm.environment.set(\"commentId\", 10);"
 						],
 						"type": "text/javascript"
@@ -170,13 +123,12 @@
 				"method": "POST",
 				"header": [],
 				"url": {
-					"raw": "{{URL}}api/v1/{{postId}}/{{commentId}}/like/remove",
+					"raw": "{{URL}}api/v1/{{commentId}}/like/remove",
 					"host": [
 						"{{URL}}api"
 					],
 					"path": [
 						"v1",
-						"{{postId}}",
 						"{{commentId}}",
 						"like",
 						"remove"
@@ -193,8 +145,7 @@
 					"listen": "prerequest",
 					"script": {
 						"exec": [
-							"pm.environment.set(\"postId\", \"Root\");\r",
-							"pm.environment.set(\"commentId\", 10);"
+							"pm.environment.set(\"commentId\", \"Root\");"
 						],
 						"type": "text/javascript"
 					}
@@ -204,13 +155,12 @@
 				"method": "POST",
 				"header": [],
 				"url": {
-					"raw": "{{URL}}api/v1/{{postId}}/{{commentId}}/dislike",
+					"raw": "{{URL}}api/v1/{{commentId}}/dislike",
 					"host": [
 						"{{URL}}api"
 					],
 					"path": [
 						"v1",
-						"{{postId}}",
 						"{{commentId}}",
 						"dislike"
 					]
@@ -226,8 +176,7 @@
 					"listen": "prerequest",
 					"script": {
 						"exec": [
-							"pm.environment.set(\"postId\", \"Root\");\r",
-							"pm.environment.set(\"commentId\", 10);"
+							"pm.environment.set(\"commentId\", \"Root\");"
 						],
 						"type": "text/javascript"
 					}
@@ -237,13 +186,12 @@
 				"method": "POST",
 				"header": [],
 				"url": {
-					"raw": "{{URL}}api/v1/{{postId}}/{{commentId}}/dislike/remove",
+					"raw": "{{URL}}api/v1/{{commentId}}/dislike/remove",
 					"host": [
 						"{{URL}}api"
 					],
 					"path": [
 						"v1",
-						"{{postId}}",
 						"{{commentId}}",
 						"dislike",
 						"remove"

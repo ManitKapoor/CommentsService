@@ -20,6 +20,7 @@ Refer the [Help Documentation](./HELP.md) to set up the service and run it
  - For demo purpose horizontal partition mechanism binds to only 1 data source
  - This setup doesn't include load balancer or server cluster setup which is important for production level
  - No Instrumentation or alert mechanisms which are required at production level
+ - A post can have both like and dislike by a user
 
 We would explain with layered architecture to show our services design
 

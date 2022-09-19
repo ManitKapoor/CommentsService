@@ -13,21 +13,21 @@ import java.util.List;
 @Repository
 public interface CommentRepository extends PagingAndSortingRepository<Comment, Long> {
 
-    List<Comment> findAllByPostIdAndParentId(String postId, long parentId, Pageable pageable);
+    List<Comment> findAllByParentId(String parentId, Pageable pageable);
 
     @Modifying
     @Query("update Comment set likes = likes + 1 where id = :id")
-    void increaseLike(@Param("id") long commentId);
+    void increaseLike(@Param("id") String commentId);
 
     @Modifying
     @Query("update Comment set dislikes = dislikes + 1 where id = :id")
-    void increaseDisLike(@Param("id") long commentId);
+    void increaseDisLike(@Param("id") String commentId);
 
     @Modifying
     @Query("update Comment set likes = likes - 1 where id = :id")
-    void decreaseLike(@Param("id") long commentId);
+    void decreaseLike(@Param("id") String commentId);
 
     @Modifying
     @Query("update Comment set dislikes = dislikes - 1 where id = :id")
-    void decreaseDisLike(@Param("id") long commentId);
+    void decreaseDisLike(@Param("id") String commentId);
 }

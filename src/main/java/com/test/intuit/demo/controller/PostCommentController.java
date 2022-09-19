@@ -21,23 +21,13 @@ public class PostCommentController {
 
     private final PostCommentService postCommentService;
 
-    @GetMapping("/{postId}/{id}/comments")
+    @GetMapping("/{parentId}/comments")
     public CommentResponseList getAllReplies(
             @RequestParam("page") int page,
             @RequestParam("size") int size,
-            @PathVariable(value = "postId") String postId,
-            Authentication authentication,
-            @PathVariable(value = "id") Long commentId) {
-        return convert(postCommentService.findAll(postId, commentId, page, size, authentication.getName()));
-    }
-
-    @GetMapping("/{postId}/comments")
-    public CommentResponseList getAllComments(
-            @RequestParam("page") int page,
-            @RequestParam("size") int size,
-            Authentication authentication,
-            @PathVariable(value = "postId") String postId) {
-        return convert(postCommentService.findAll(postId, page, size, authentication.getName()));
+            @PathVariable(value = "parentId") String parentId,
+            Authentication authentication) {
+        return convert(postCommentService.findAll(parentId, page, size, authentication.getName()));
     }
 
     @PostMapping("/comment")
@@ -47,35 +37,31 @@ public class PostCommentController {
         return postCommentService.save(commentRequest);
     }
 
-    @PostMapping("/{postId}/{id}/like")
-    public String likeComment(@PathVariable(value = "postId") String postId,
-                            @PathVariable(value = "id") Long commentId,
+    @PostMapping("/{id}/like")
+    public String likeComment(@PathVariable(value = "id") String commentId,
                             Authentication authentication) {
-        postCommentService.likeComment(postId, commentId, authentication.getName());
+        postCommentService.likeComment(commentId, authentication.getName());
         return Constants.SUCCESS;
     }
 
-    @PostMapping("/{postId}/{id}/like/remove")
-    public String removeLikeComment(@PathVariable(value = "postId") String postId,
-                                  @PathVariable(value = "id") Long commentId,
+    @PostMapping("/{id}/like/remove")
+    public String removeLikeComment(@PathVariable(value = "id") String commentId,
                                   Authentication authentication) {
-        postCommentService.removeLikeComment(postId, commentId, authentication.getName());
+        postCommentService.removeLikeComment(commentId, authentication.getName());
         return Constants.SUCCESS;
     }
 
-    @PostMapping("/{postId}/{id}/dislike")
-    public String dislikeComment(@PathVariable(value = "postId") String postId,
-                                @PathVariable(value = "id") Long commentId,
+    @PostMapping("/{id}/dislike")
+    public String dislikeComment(@PathVariable(value = "id") String commentId,
                                Authentication authentication) {
-        postCommentService.dislikeComment(postId, commentId, authentication.getName());
+        postCommentService.dislikeComment(commentId, authentication.getName());
         return Constants.SUCCESS;
     }
 
-    @PostMapping("/{postId}/{id}/dislike/remove")
-    public String removedDislikeComment(@PathVariable(value = "postId") String postId,
-                                      @PathVariable(value = "id") Long commentId,
+    @PostMapping("/{id}/dislike/remove")
+    public String removedDislikeComment(@PathVariable(value = "id") String commentId,
                                       Authentication authentication) {
-        postCommentService.removeDisLikeComment(postId, commentId, authentication.getName());
+        postCommentService.removeDisLikeComment(commentId, authentication.getName());
         return Constants.SUCCESS;
     }
 

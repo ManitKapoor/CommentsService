@@ -29,48 +29,35 @@
 
     let highlightClass = "activated";
 
-    function likeComment(commentId) {
+    let buttonId = {
+        "like": "#likeButton",
+        "dislike": "#dislikeButton"
+    };
+
+    let countId = {
+        "like": "#countLiked",
+        "dislike": "#countDisliked"
+    }
+
+    function actionComment(commentId, action) {
         let part = "";
         let count = 1;
-        if (pageBody[commentId].liked) {
+        if (pageBody[commentId][action]) {
             part = "/remove";
             count = -1;
         }
-        let callUrl =  "/api/v1/" + postId  + "/" + commentId + "/like" + part;
+        let callUrl =  "/api/v1/" + commentId + "/" + action + part;
         $.ajax({
             url: callUrl,
             method: "POST",
             success: function(response) {
-                let likes = parseInt($("#countLiked" + commentId).html()) + count;
-                $("#countLiked" + commentId).html(likes);
+                let likes = parseInt($(countId[action] + commentId).html()) + count;
+                $(countId[action] + commentId).html(likes);
                 pageBody[commentId].liked = !pageBody[commentId].liked;
                 if (pageBody[commentId].liked) {
-                    $("#likeButton" + commentId).addClass(highlightClass);
+                    $(buttonId[action] + commentId).addClass(highlightClass);
                 } else {
-                    $("#likeButton" + commentId).removeClass(highlightClass);
-                }
-            }
-        })
-    }
-    function dislikeComment(commentId) {
-        let part = "";
-        let count = 1;
-        if (pageBody[commentId].disliked) {
-            part = "/remove";
-            count = -1;
-        }
-        let callUrl =  "/api/v1/" + postId  + "/" + commentId + "/dislike" + part;
-        $.ajax({
-            url: callUrl,
-            method: "POST",
-            success: function(response) {
-                let disLikes = parseInt($("#countDisliked" + commentId).html()) + count;
-                $("#countDisliked" + commentId).html(disLikes);
-                pageBody[commentId].disliked = !pageBody[commentId].disliked;
-                if (pageBody[commentId].disliked) {
-                    $("#dislikeButton" + commentId).addClass(highlightClass);
-                } else {
-                    $("#dislikeButton" + commentId).removeClass(highlightClass);
+                    $(buttonId[action] + commentId).removeClass(highlightClass);
                 }
             }
         })
@@ -89,7 +76,7 @@
         if (!pageBody[commentId].empty) {
             pageBody[commentId].page++;
         }
-        let callUrl =  "/api/v1/" + postId  + "/" + commentId + "/comments?page=" + pageBody[commentId].page + "&size=" + pageBody[commentId].size;
+        let callUrl =  "/api/v1/" + commentId + "/comments?page=" + pageBody[commentId].page + "&size=" + pageBody[commentId].size;
         $.ajax({
             url: callUrl,
             method:"GET",
@@ -120,10 +107,10 @@
         "                {comment.content}\n" +
         "            </p>\n" +
         "            <button type='button' class=\"tagButton\" id=\"likeButton{comment.id}\"\n" +
-        "                    onclick='likeComment(\"{comment.id}\")'><span class=\"count\"\n" +
+        "                    onclick='actionComment(\"{comment.id}\",\"like\")'><span class=\"count\"\n" +
         "            id=\"countLiked{comment.id}\">{comment.likes}</span> <i class=\"material-icons reduceSize\">thumb_up</i></button>\n" +
         "            <button type='button' class=\"tagButton\" id=\"dislikeButton{comment.id}\"\n" +
-        "                    onclick='dislikeComment(\"{comment.id}\")'><span\n" +
+        "                    onclick='actionComment(\"{comment.id}\", \"dislike\")'><span\n" +
         "                    class=\"count\" id=\"countDisliked{comment.id}\">{comment.dislikes}</span> <i\n" +
         "                    class=\"material-icons reduceSize\">thumb_down</i></button>\n" +
         "        </div>\n" +
@@ -210,8 +197,8 @@
     }
 
     $(document).ready(function(){
-        $('#commentForm0').on('submit', getHandler("0"));
-        prepare("0");
+        $('#commentForm' + postId).on('submit', getHandler(postId));
+        prepare(postId);
     });
 </script>
 </html>

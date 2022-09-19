@@ -26,7 +26,6 @@ public class UserDaoJpaImpl implements UserDao {
             return null;
         }
         return User.builder()
-                .id(userEntity.getId())
                 .password(userEntity.getPassword())
                 .username(userEntity.getUsername())
                 .build();
@@ -34,7 +33,6 @@ public class UserDaoJpaImpl implements UserDao {
 
     private UserEntity convertToEntity(User user) {
         return UserEntity.builder()
-                .id(user.getId())
                 .password(user.getPassword())
                 .username(user.getUsername())
                 .build();

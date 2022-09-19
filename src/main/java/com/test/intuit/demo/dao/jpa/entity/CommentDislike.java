@@ -20,14 +20,11 @@ public class CommentDislike {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "post_id")
-    private String postId;
-
     @Column(name = "user_id")
     private String userId;
 
     @Column(name = "comment_id")
-    private Long commentId;
+    private String commentId;
     @Column(name = "created_on")
     private Date createdOn;
 

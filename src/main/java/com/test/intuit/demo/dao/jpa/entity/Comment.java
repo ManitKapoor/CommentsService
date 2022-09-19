@@ -14,18 +14,15 @@ import java.util.Date;
 public class Comment implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(name = "post_id")
-    private String postId;
+    private String id;
 
     @Column(name = "created_user_id")
     private String name;
 
     private String content;
+
     @Column(name = "parent_id")
-    private Long parentId;
+    private String parentId;
 
     private Integer likes;
     private Integer dislikes;

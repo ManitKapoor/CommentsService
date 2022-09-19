@@ -12,13 +12,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CommentResponse {
-    private String postId;
-    private long id;
+    private String id;
     private String name;
     private String content;
     private int likes;
     private int dislikes;
-    private Long parentId;
+    private String parentId;
     private boolean liked;
     private boolean disliked;
     private String updateOn;

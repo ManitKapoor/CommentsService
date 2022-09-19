@@ -15,32 +15,29 @@ public class PostCommentService {
 
     private final PostPartitionService postPartitionService;
 
-    public List<CommentResponse> findAll(String postId, int page, int size, String username) {
-        return postPartitionService.getCommentDao(postId).findAll(postId, page, size, username);
-    }
 
-    public List<CommentResponse> findAll(String postId, Long commentId, int page, int size, String username) {
-        return postPartitionService.getCommentDao(postId).findAllReplies(postId, commentId, page, size, username);
+    public List<CommentResponse> findAll(String parentId, int page, int size, String username) {
+        return postPartitionService.getCommentDao(parentId).findAllReplies(parentId, page, size, username);
     }
 
     public CommentResponse save(CommentRequest commentRequest) {
-        return postPartitionService.getCommentDao(commentRequest.getPostId()).save(commentRequest);
+        return postPartitionService.getCommentDao(commentRequest.getParentId()).save(commentRequest);
     }
 
-    public void likeComment(String postId, Long commentId, String username) {
-        postPartitionService.getCommentDao(postId).likeComment(postId, commentId, username);
+    public void likeComment(String  commentId, String username) {
+        postPartitionService.getCommentDao(commentId).likeComment(commentId, username);
     }
 
-    public void removeLikeComment(String postId, Long commentId, String username) {
-        postPartitionService.getCommentDao(postId).removeLikeComment(postId, commentId, username);
+    public void removeLikeComment(String  commentId, String username) {
+        postPartitionService.getCommentDao(commentId).removeLikeComment(commentId, username);
     }
 
-    public void dislikeComment(String postId, Long commentId, String username) {
-        postPartitionService.getCommentDao(postId).dislikeComment(postId, commentId, username);
+    public void dislikeComment(String  commentId, String username) {
+        postPartitionService.getCommentDao(commentId).dislikeComment(commentId, username);
 
     }
 
-    public void removeDisLikeComment(String postId, Long commentId, String username) {
-        postPartitionService.getCommentDao(postId).removeDisLikeComment(postId, commentId, username);
+    public void removeDisLikeComment(String  commentId, String username) {
+        postPartitionService.getCommentDao(commentId).removeDisLikeComment(commentId, username);
     }
 }
