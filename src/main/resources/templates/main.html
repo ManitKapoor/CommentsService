@@ -7,8 +7,7 @@
 </head>
 <!-- Compiled and minified CSS -->
 <div class="comment-thread">
-    <h5>Comment System</h5>
-    <h6 id="postId" th:text="${postId}"></h6>
+    <h6>Comment System - <span id="postId" th:text="${postId}"></span></h6>
     <form class="commentForm" method="POST" id="commentForm0">
         <div class="form-group">
             <input name="content" id="content" class="textarea" placeholder="reply" rows="2"
@@ -17,6 +16,7 @@
         </div>
     </form>
     <div id="showComments0"></div>
+    <button class="loadMoreReplies" onclick='showComments("0")'>Load more replies</button>
 </div>
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <link rel="stylesheet" href="/main.css">
